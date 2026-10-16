@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+/backend/.DS_Store
+# Node / generale
+/node_modules/
+/package-lock.json
+/package.json
+
+# Frontend (Angular)
+/frontend/.angular/
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.cache/
+
+# Backend
+/backend/node_modules/
+/backend/dist/
+/backend/.env
+/backend/prisma/migrations/
+
+.claude
