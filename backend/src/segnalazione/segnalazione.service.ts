@@ -52,7 +52,7 @@ export class SegnalazioneService {
       files.map((f) => this.storage.uploadImmagine(f)),
     );
 
-    return this.prisma.segnalazione.create({
+    const nuovaSegnalazione = await this.prisma.segnalazione.create({
       data: {
         titolo: dto.titolo,
         descrizione: dto.descrizione,
@@ -64,6 +64,15 @@ export class SegnalazioneService {
       },
       include: { immagini: true },
     });
+    if (dto.descrizioneProposta) {
+      await this.propostaSegnalazione(
+        nuovaSegnalazione.id,
+        userId,
+        dto.descrizioneProposta,
+      );
+    }
+
+    return nuovaSegnalazione;
   }
 
   async findAll() {

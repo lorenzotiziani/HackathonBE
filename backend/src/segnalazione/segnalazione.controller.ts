@@ -21,6 +21,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { SegnalazioneService } from './segnalazione.service';
 import { CreateSegnalazioneDto } from './dto/create-segnalazione.dto';
 import {
+  PropostaSegnalazioneDto,
   UpdateSegnalazioneDto,
   UpdateStatoSegnalazioneDto,
   VotazioneSegnalazioneDto,
@@ -133,6 +134,24 @@ export class SegnalazioneController {
       id,
       req.user.userId,
       dto.tipo,
+    );
+
+    return { success: true, data };
+  }
+
+  @Post(':id/proposta')
+  @Roles(Ruolo.CITTADINO)
+  @ApiOperation({ summary: 'aggiunge una proposta alla segnalazione' })
+  async proposta(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(PropostaSegnalazioneDto))
+    dto: PropostaSegnalazioneDto,
+    @Req() req: { user: JwtPayload },
+  ) {
+    const data = await this.segnalazioneService.propostaSegnalazione(
+      id,
+      req.user.userId,
+      dto.descrizione,
     );
 
     return { success: true, data };
