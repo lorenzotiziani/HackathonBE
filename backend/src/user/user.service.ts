@@ -15,11 +15,10 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      return await this.prisma.tUtente.create({
+      return await this.prisma.utente.create({
         data: {
           ...createUserDto,
-          role: 'USER',
-          isActive: true,
+          ruolo: 'CITTADINO',
         },
       });
     } catch (error) {
@@ -28,7 +27,7 @@ export class UserService {
   }
 
   async findAll(): Promise<Omit<User, 'password'>[]> {
-    const users = await this.prisma.tUtente.findMany();
+    const users = await this.prisma.utente.findMany();
     return users.map(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ({ password, ...userWithoutPassword }) => userWithoutPassword,
@@ -36,7 +35,7 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<Omit<User, 'password'> | null> {
-    const user = await this.prisma.tUtente.findUnique({
+    const user = await this.prisma.utente.findUnique({
       where: { id },
     });
 
@@ -51,7 +50,7 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.tUtente.findFirst({
+    return this.prisma.utente.findFirst({
       where: { email: email.toLowerCase() },
     });
   }
@@ -61,7 +60,7 @@ export class UserService {
     updateUserDto: UpdateUserDto,
   ): Promise<Omit<User, 'password'> | null> {
     try {
-      const updated = await this.prisma.tUtente.update({
+      const updated = await this.prisma.utente.update({
         where: { id },
         data: updateUserDto,
       });
@@ -84,7 +83,7 @@ export class UserService {
 
   async remove(id: number) {
     try {
-      await this.prisma.tUtente.delete({
+      await this.prisma.utente.delete({
         where: { id },
       });
 

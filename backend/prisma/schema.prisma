@@ -7,27 +7,150 @@ datasource db {
   provider = "postgresql"
 }
 
-// TODO: MIGLIORARE LA VALIDAZIONE E GLI ERRORI
+enum Ruolo {
+  CITTADINO
+  COMUNE
+}
 
-model TUtente {
-  id       Int     @id @default(autoincrement())
-  email    String
-  password String
-  nome     String
-  cognome  String
-  isActive Boolean @default(false)
-  role     String  @default("USER")
+enum StatoSegnalazione {
+  SEGNALATO
+  IN_APPROVAZIONE
+  IN_LAVORAZIONE
+  RISOLTO
+  ANNULLATO
+}
 
-  refreshTokens RefreshToken[]
+enum TipoVoto {
+  UP
+  DOWN
+}
+
+
+model Utente {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  nome      String
+  cognome   String
+  ruolo     Ruolo    @default(CITTADINO)
+
+  refreshTokens       RefreshToken[]
+  segnalazioni        Segnalazione[]
+  voti                VotoSegnalazione[]
+  proposte            PropostaSegnalazione[]
+  iniziativeCreate    Iniziativa[]
+  partecipazioni      PartecipazioneIniziativa[]
+
+  @@map("utenti")
 }
 
 model RefreshToken {
   id        Int      @id @default(autoincrement())
-  token     String
+  token     String   @unique
   userId    Int
   expiresAt DateTime
-  isRevoked Boolean? @default(false)
-  createdAt DateTime
+  isRevoked Boolean  @default(false)
+  createdAt DateTime @default(now())
 
-  user TUtente @relation(fields: [userId], references: [id])
+  user Utente @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model Segnalazione {
+  id          Int               @id @default(autoincrement())
+  titolo      String
+  descrizione String?
+  stato       StatoSegnalazione @default(SEGNALATO)
+
+  latitudine  Float?
+  longitudine Float?
+  indirizzo   String
+
+  autoreId  Int
+  createdAt DateTime @default(now())
+
+  autore   Utente                  @relation(fields: [autoreId], references: [id])
+  immagini SegnalazioneImmagine[]
+  voti     VotoSegnalazione[]
+  proposte PropostaSegnalazione[]
+
+  @@index([stato])
+  @@index([autoreId])
+  @@index([latitudine, longitudine])
+  @@map("segnalazioni")
+}
+
+model SegnalazioneImmagine {
+  id             Int      @id @default(autoincrement())
+  url            String
+  segnalazioneId Int
+  createdAt      DateTime @default(now())
+
+  segnalazione Segnalazione @relation(fields: [segnalazioneId], references: [id], onDelete: Cascade)
+
+  @@index([segnalazioneId])
+  @@map("segnalazione_immagini")
+}
+
+model VotoSegnalazione {
+  utenteId       Int
+  segnalazioneId Int
+  tipo           TipoVoto
+  createdAt      DateTime @default(now())
+
+  utente       Utente       @relation(fields: [utenteId], references: [id], onDelete: Cascade)
+  segnalazione Segnalazione @relation(fields: [segnalazioneId], references: [id], onDelete: Cascade)
+
+  @@id([utenteId, segnalazioneId])
+  @@index([segnalazioneId, tipo])
+  @@map("voti_segnalazione")
+}
+
+model PropostaSegnalazione {
+  id             Int      @id @default(autoincrement())
+  descrizione    String
+  segnalazioneId Int
+  autoreId       Int
+  createdAt      DateTime @default(now())
+
+  segnalazione Segnalazione @relation(fields: [segnalazioneId], references: [id], onDelete: Cascade)
+  autore       Utente       @relation(fields: [autoreId], references: [id])
+
+  @@index([segnalazioneId])
+  @@map("proposte_segnalazione")
+}
+
+model Iniziativa {
+  id          Int       @id @default(autoincrement())
+  titolo      String
+  descrizione String
+  immagineUrl String?
+  dataInizio  DateTime?
+  dataFine    DateTime?
+  luogo       String?
+  creatoreId  Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  creatore      Utente                     @relation(fields: [creatoreId], references: [id])
+  partecipanti  PartecipazioneIniziativa[]
+
+  @@index([creatoreId])
+  @@map("iniziative")
+}
+
+model PartecipazioneIniziativa {
+  utenteId     Int
+  iniziativaId Int
+  createdAt    DateTime @default(now())
+
+  utente     Utente     @relation(fields: [utenteId], references: [id], onDelete: Cascade)
+  iniziativa Iniziativa @relation(fields: [iniziativaId], references: [id], onDelete: Cascade)
+
+  @@id([utenteId, iniziativaId])
+  @@index([iniziativaId])
+  @@map("partecipazioni_iniziativa")
 }

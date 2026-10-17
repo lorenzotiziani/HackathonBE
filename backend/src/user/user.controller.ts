@@ -33,6 +33,8 @@ export class UserController {
     return this.userService.findOne(req.user.userId);
   }
 
+  /* 
+  per il momento non usabile visto che non prevedo admin
   @Get()
   @UseGuards(RolesGuard)
   @Roles('ADMIN')
@@ -40,6 +42,7 @@ export class UserController {
   findAll() {
     return this.userService.findAll();
   }
+  
 
   @Get('id/:id')
   @UseGuards(RolesGuard)
@@ -48,6 +51,8 @@ export class UserController {
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(id);
   }
+
+  */
 
   @Get('email')
   @ApiOperation({ summary: 'Find user by email' })

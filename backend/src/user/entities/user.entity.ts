@@ -4,6 +4,5 @@ export interface User {
   password: string;
   nome: string;
   cognome: string;
-  role?: string;
-  isActive: boolean;
+  ruolo?: string;
 }

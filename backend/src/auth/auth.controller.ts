@@ -1,4 +1,11 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
@@ -28,7 +35,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'Login and receive access + refresh tokens' })
-  @ApiBody({ schema: { example: { email: 'user@example.com', password: 'Password1!' } } })
+  @ApiBody({
+    schema: {
+      example: { email: 'user@example.com', password: 'Password1!' },
+    },
+  })
   async login(
     @Body(new ZodValidationPipe(LoginSchema)) body: z.infer<typeof LoginSchema>,
   ) {

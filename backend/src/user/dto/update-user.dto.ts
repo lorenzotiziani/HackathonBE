@@ -14,7 +14,6 @@ export const UpdateUserSchema = UserBaseSchema.partial()
   .extend({
     password: strongPassword.optional(),
     confirmPassword: z.string().optional(),
-    role: z.string().optional(),
   })
   .refine(
     (data) => {

@@ -52,10 +52,6 @@ export class AuthService {
       throw new UnauthorizedException('Credenziali errate');
     }
 
-    if (!user.isActive) {
-      throw new UnauthorizedException('Account non attivato');
-    }
-
     const isMatch = await bcrypt.compare(pass, user.password);
 
     if (!isMatch) {
@@ -111,11 +107,6 @@ export class AuthService {
       throw new UnauthorizedException('Utente non trovato');
     }
 
-    if (!user.isActive) {
-      await this.refreshTokenService.revokeByUserId(user.id);
-      throw new UnauthorizedException('Account disattivato');
-    }
-
     await this.refreshTokenService.revokeByToken(token);
 
     const { accessToken, refreshToken } = await this.generateTokens(user);
@@ -146,12 +137,12 @@ export class AuthService {
   async generateTokens(user: {
     id: number;
     email: string;
-    role?: string | null;
+    ruolo?: string | null;
   }) {
     const payload = {
       userId: user.id,
       email: user.email,
-      role: user.role ?? '',
+      ruolo: user.ruolo ?? '',
     };
 
     const accessToken = await this.jwtService.signAsync(payload);

@@ -7,6 +7,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
+import { SegnalazioneModule } from './segnalazione/segnalazione.module';
+import { IniziativaModule } from './iniziativa/iniziativa.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -32,6 +34,8 @@ import * as Joi from 'joi';
     UserModule,
     AuthModule,
     HealthModule,
+    SegnalazioneModule,
+    IniziativaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
