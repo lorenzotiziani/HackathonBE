@@ -1,4 +1,4 @@
-# Hackathon BE
+# MyC BE
 
 Backend REST per una piattaforma di partecipazione civica: i cittadini inviano **segnalazioni** geolocalizzate (con foto), le votano e partecipano alle **iniziative** pubblicate dal Comune.
 
